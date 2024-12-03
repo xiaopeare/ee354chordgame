@@ -4,6 +4,7 @@ module vga_top(
     input ClkPort,
     input BtnC,
     input BtnU,
+    input [11:0] SW,       // Added 12 switches as input
     
     //VGA signal
     output hSync, vSync,
@@ -21,8 +22,9 @@ module vga_top(
     wire[9:0] hc, vc;
     wire[11:0] rgb;
     
-    // Key selection - C key (bit 0) is set to 1, all others 0
-    wire [11:0] keySelect = 12'b000000000001;
+    // Connect switches directly to keySelect
+    wire [11:0] keySelect;
+    assign keySelect = SW;  // SW[0] is C, SW[1] is C#, etc.
     
     // Module instantiations
     display_controller dc(
@@ -37,7 +39,7 @@ module vga_top(
     vga_bitchange vbc(
         .clk(ClkPort), 
         .bright(bright), 
-        .keySelect(keySelect),  // C key is always highlighted
+        .keySelect(keySelect),  // Now connected to switches
         .hCount(hc), 
         .vCount(vc), 
         .rgb(rgb)
